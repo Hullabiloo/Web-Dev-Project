@@ -1,0 +1,433 @@
+/* Main */
+
+* 
+{
+    box-sizing: border-box;
+}
+body {
+    font-family: "Arial Black", sans-serif; /* Used to change the font globally*/
+    margin: 0 auto;
+}
+
+hr 
+{
+    background-color: #16552a;
+    border:#22ff00;
+    border-radius: 35px;
+    height: 11px;
+    width: 60%;
+}
+
+a 
+{
+    text-decoration: none;
+    color: white;
+}
+
+pre 
+{
+    font-family: "Arial Black", sans-serif; /* The pre tag seems to not take the global font declared above so I redeclared it for the pre tag specifically */
+    margin: 0 auto;
+}
+
+h1 
+{
+    font-size: 2.5em;
+    margin: 0;
+    color: #cfffe8;
+    background: radial-gradient(#14653b, #42a270);
+    border: solid black;
+    border-radius: 25px;
+    padding: 20px;
+}
+
+h2 
+{
+    font-size: 40px;
+    text-align: center;
+}
+
+h3 
+{
+    margin: 25px 0 0 0;
+}
+
+a 
+{
+    text-decoration: none;
+    color: white;
+}
+
+/* Header */
+/* Menu */
+
+.menu-items /* Alters the tabs as a group */
+{
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+    height: 100%;
+    margin: 0;
+    padding: 5px;
+}
+
+.menu /* alters the background and the text within the tabs */
+{
+    width: 100%;
+    background-color: #008254;
+    box-shadow: 0 2px #696a6d80;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    align-items: center;
+    z-index: 9;
+}
+
+.tabs /* Alters the text within the tabs */
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-transform:capitalize;
+    width: 110px;
+    color: #ffffff;
+    cursor: pointer;
+    margin: 0 0px 0 0px;
+    height: 100%;
+}
+
+.overlay /* Alters the hover animation for the tabs */
+{
+    position: absolute;
+    top: 0;
+    background: #004923;
+    width: 100%;
+    height: 0%;
+    transition: all 0.35s ease-in-out;
+    z-index: -1;
+}
+
+.tabs:hover .overlay /* Allows the overlay to fill the tab border */
+{
+    height: 100%;
+}
+
+/* End Menu */
+/* End Header */
+
+/* Title/Home */
+
+.title /* Alters the home page */
+{
+    height: 50px;
+    width: 100%;
+    background: linear-gradient(#000000b3,#000000b3),
+    url("../images/background.jpg");
+    background-size: cover;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+
+.pushup /* Alters a gap between the header and the home content */
+{
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+
+.abtbtn /* Alters a redirect button the the About page */
+{
+    padding: 10px 25px;
+    background: #004923;
+    color: white;
+    border: solid black;
+    display: inline-block;
+    border-radius: 2px;
+    transition-duration: 0.2s;
+}
+
+.abtbtn:hover /* Alters the buttons colour when hovered over */
+{
+    background: #439c6e;
+}
+
+/* End Title/Home Page */
+
+/* General Text */
+
+#pgtexts /* Alters the parent id for all the child ids */
+{
+    color: white;
+    background: #078115b6;
+}
+
+.pgtext 
+{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 40px 50px;
+}
+
+#pgtexts h2,
+.pgtext h3 
+{
+    letter-spacing: 1.2px;
+}
+
+#pgtexts h2 
+{
+    background: #036e25;
+    border-bottom: solid #000000;
+    border-radius: 0px;
+    padding: 50px 0 0 0;
+    border-width: 5px;
+}
+
+.pgtext h3 {
+    font-size: 20px;
+    color: #0f2b0d;
+    background-color: #008254;
+    border: solid #000000;
+    border-radius: 15px;
+    padding: 0 15px;
+    display: inline;
+}
+
+.pgtext p
+{
+    color: #f2fff2;
+    background: #0b944e;
+    border: solid black;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.pgtext pre
+{
+    color: #f2fff2;
+    margin-top: 10px;
+    font-size: 19px;
+    line-height: 1.4em;
+    background: #0b944e;
+    border: solid black;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.pimg 
+{
+    width: 100%;
+    height: 250px;
+    align-self: center;
+    border: 5px solid #111;
+    box-shadow: 0 0 2px #111;
+    margin: 0 0 0 20px;
+}
+
+.pimg2
+{
+	width: 40%;
+	height: 250px;
+	align-self: center;
+	border: 5px solid #111;
+	box-shadow: 0 0 2px #111;
+	margin: 0 25px 0 0;
+}
+
+.pimgmask /* Alters an image with a mask */
+{
+    width: 50%;
+    height: 250px;
+    align-self: center;
+    border: 5px solid #111;
+    box-shadow: 0 0 2px #111;
+    margin: 0 0 0 20px;
+    -webkit-mask-image: radial-gradient(black, transparent);
+    mask-image: radial-gradient(black, transparent);
+}
+
+
+.pimgblend /* Alters an image with a blend */
+{
+    width: 40%;
+    height: 250px;
+    align-self: center;
+    mix-blend-mode: darken;
+    border: 5px solid #111;
+    box-shadow: 0 0 2px #111;
+    margin: 0 25px 0 0;
+}
+
+.pimgfilter /* Alters an image with a filter */
+{
+    width: 40%;
+    height: 250px;
+    align-self: center;
+    filter: grayscale(50%);
+    border: 5px solid #111;
+    box-shadow: 0 0 2px #111;
+    margin: 0 25px 0 0;
+}
+
+/* End General Text */
+
+/* Community Redirect */ /* Alters the community redirect present in most pages */
+
+#community /* Alters the community tag as a parent id */
+{
+    text-align: center;
+    color: white;
+}
+
+.combtn /* Alters the button which redirects you to the Action List page */
+{
+    background: #179654;
+    color: #000100;
+    border: solid black;
+    padding:  10px;
+    display: inline-block;
+    border-radius: 2px;
+    transition-duration: 0.2s;
+}
+
+.combtn:hover /* Alters the colour of the redirect button when you hover over it */
+{
+    background: #00612f;
+}
+
+.com-img 
+{
+    background: linear-gradient(#000000b3,#000000b3),
+    url("../images/communitybg.jpg");
+    background-size: cover;
+    text-align: center;
+    height: 750px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+
+.com-h 
+{
+    height: 10vh;
+}
+
+.com-title 
+{
+    font-size: 0.95em;
+    line-height: 1.5em;
+    margin: 30px 30px;
+    background: rgba(2, 70, 24, 0.667);
+    padding: 20px;
+    border: solid black;
+    border-radius: 25px;
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* End Community Redirect */
+
+/* @media */ /* Alters tags based on screen size */
+
+@media(min-width: 900px) 
+
+{
+    /* @media Menu*/ /* Alters tags based on screen size */
+
+    .menu 
+    {
+	position: fixed;
+    }
+    .menu-items a:not(:first-child) 
+    {
+	display: flex;
+    }
+    .menu-items 
+    {
+	justify-content: center;
+    }
+
+    /*End @media Menu*/
+
+    /* @media Tabs */ /* Alters tags based on screen size */
+	
+    .tabs 
+    {
+	padding: 0 6px;
+	margin-right: 5px;
+	width: 137px;
+	font-size: 1.2em;
+	background: none;
+        border-style: inset;
+        border-color: #0b944e;
+        border-width: 5px;
+	height: 70px;
+    }
+
+    /* End @media Tabs */
+
+    /* @media Title */
+    
+    .title
+    {
+	padding-top: 85px;
+	height: 100vh;
+    }
+    
+    .pimg 
+    {
+	width: 35%;
+    }
+
+    /* End @media Title */
+
+    /* @media General Text */
+
+    .pgtext 
+    {
+	flex-wrap: nowrap;
+    }
+
+    .pgtext div 
+    {
+	line-height: 1.5;
+	font-size: 1.15em;
+    }
+
+    .f, .tabs
+    {
+	flex-direction: row-reverse;
+    }
+
+    h1
+    {
+	font-size: 4.5em;
+    }
+
+    h2 
+    {
+	font-size: 55px;
+    }
+
+    .pgtext h3 
+    {
+        font-size: 30px;
+    }
+
+    /* End @media General Text */
+
+}
+
+/* End @media */
