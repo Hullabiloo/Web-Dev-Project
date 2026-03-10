@@ -1,0 +1,1523 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Basic page settings -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SDG 12 Examples - Responsible Consumption & Production</title>
+
+    <!-- Link to external CSS stylesheet -->
+    <link rel="stylesheet" href="../static/css/stylesheet.css" />
+  </head>
+  <body>
+    <!-- Hamburger menu button for mobile navigation -->
+    <button id="hamburgerMenu" class="hamburger-menu">☰</button>
+
+    <!-- Main content container -->
+    <main class="main-content">
+      <!-- Page header with title and action buttons -->
+      <header>
+        <div>
+          <h1>SDG 12 Examples</h1>
+          <p>Responsible Consumption & Production</p>
+        </div>
+        <div class="header-buttons">
+          <button id="tagManagerBtn" class="btn-primary">Manage Tags</button>
+        </div>
+      </header>
+
+      <!-- Sidebar for filtering by target numbers -->
+      <div id="targetSidebar" class="target-sidebar">
+        <div class="sidebar-header">
+          <h3>Target Numbers</h3>
+          <button id="closeSidebar" class="close-sidebar">✕</button>
+        </div>
+        <!-- Container where target checkboxes will be added dynamically -->
+        <div id="targetFilterContainer" class="target-list"></div>
+        <button
+          type="button"
+          id="clearTargets"
+          class="btn-secondary clear-targets-btn"
+        >
+          Clear All
+        </button>
+      </div>
+
+      <!-- Control section for filters and sorting -->
+      <section class="controls" id="controls">
+        <!-- Tag filter section -->
+        <div class="filter-group">
+          <label>Filter by Tags:</label>
+          <button
+            type="button"
+            id="toggleTagFilter"
+            class="btn-secondary btn-sm"
+          >
+            ▶
+          </button>
+          <!-- Collapsible content for tag filter checkboxes -->
+          <div id="tagFilterContent" class="tag-filter-content collapsed">
+            <!-- Container where tag checkboxes will be added dynamically -->
+            <div id="tagFilterContainer" class="tag-checkboxes"></div>
+            <button
+              type="button"
+              id="clearTags"
+              class="btn-secondary btn-sm"
+            >
+              Clear All
+            </button>
+          </div>
+        </div>
+
+        <!-- Sort dropdown section -->
+        <div class="filter-group">
+          <label for="sortBy">Sort By:</label>
+          <select id="sortBy">
+            <option value="title-asc">Title (A-Z)</option>
+            <option value="title-desc">Title (Z-A)</option>
+            <option value="target-asc" selected>Target (Asc)</option>
+            <option value="target-desc">Target (Desc)</option>
+            <option value="tags-asc">Tags (A-Z)</option>
+            <option value="tags-desc">Tags (Z-A)</option>
+            <option value="rating-asc">Rating (Low-High)</option>
+            <option value="rating-desc">Rating (High-Low)</option>
+            <option value="favorite-asc">Favourite (No First)</option>
+            <option value="favorite-desc">Favourite (Yes First)</option>
+            <option value="images-asc">Images (Fewest First)</option>
+            <option value="images-desc">Images (Most First)</option>
+          </select>
+        </div>
+
+        <!-- Add new example button -->
+        <div class="filter-group push-right">
+          <button type="button" id="toggleAddBtn" class="btn-primary">
+            + Add New Example
+          </button>
+        </div>
+      </section>
+
+      <!-- Form section for adding a new example (hidden by default) -->
+      <section class="add-section" id="addSection">
+        <h2>Add New Example</h2>
+        <!-- Form with novalidate to handle custom validation in JavaScript -->
+        <form id="addForm" class="form-add" novalidate>
+          <!-- Target number input field -->
+          <div class="form-group">
+            <label for="newTargetNumber">Target Number:</label>
+            <input
+              id="newTargetNumber"
+              type="text"
+              placeholder="e.g., 12.1"
+              required
+            />
+            <!-- Error message span (hidden by default, shown by JavaScript when needed) -->
+            <span class="error-msg" id="errorTargetNumber"></span>
+          </div>
+
+          <!-- Title input field -->
+          <div class="form-group">
+            <label for="newTitle">Title:</label>
+            <input
+              id="newTitle"
+              type="text"
+              placeholder="Example title"
+              required
+            />
+            <span class="error-msg" id="errorTitle"></span>
+          </div>
+
+          <!-- Description textarea -->
+          <div class="form-group">
+            <label for="newDescription">Description:</label>
+            <textarea
+              id="newDescription"
+              rows="3"
+              placeholder="Description"
+              required
+            ></textarea>
+            <span class="error-msg" id="errorDescription"></span>
+          </div>
+
+          <!-- Tags input section -->
+          <div class="form-group">
+            <div class="tag-label-row">
+              <label for="newTags">Tags:</label>
+              <button
+                type="button"
+                id="openTagManagerFromAdd"
+                class="btn-secondary btn-sm"
+              >
+                Manage Tags
+              </button>
+            </div>
+            <input
+              id="newTags"
+              type="text"
+              placeholder="Select or type comma-separated tags"
+              required
+            />
+            <!-- Container for suggested tags (populated dynamically) -->
+            <div id="suggestedTags" class="suggested-tags"></div>
+            <span class="error-msg" id="errorTags"></span>
+          </div>
+
+          <!-- Image URL input section -->
+          <fieldset class="form-group">
+            <legend>Images:</legend>
+            <div class="image-input-group">
+              <input id="newImageUrl" type="url" placeholder="Image URL" />
+              <button type="button" id="addImageBtn" class="btn-secondary">
+                + Add Image
+              </button>
+              <span class="error-msg" id="errorImageUrl"></span>
+            </div>
+            <!-- Container where image previews will appear -->
+            <div id="newImagePreview" class="image-preview"></div>
+          </fieldset>
+
+          <!-- Submit and cancel buttons -->
+          <div class="form-buttons">
+            <button type="button" id="addBtn" class="btn-success">
+              Add Example
+            </button>
+            <button type="button" id="cancelAddBtn" class="btn-secondary">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Edit form section (hidden by default, shown when user clicks Edit on a card) -->
+      <section class="edit-section" id="editSection">
+        <h2>Edit Example</h2>
+        <form id="editForm" class="form-edit" novalidate>
+          <!-- Hidden field to store the ID of the example being edited -->
+          <input id="editId" type="hidden" />
+
+          <!-- Edit form fields (similar to add form) -->
+          <div class="form-group">
+            <label for="editTargetNumber">Target Number:</label>
+            <input id="editTargetNumber" type="text" required />
+            <span class="error-msg" id="errorEditTargetNumber"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="editTitle">Title:</label>
+            <input id="editTitle" type="text" required />
+            <span class="error-msg" id="errorEditTitle"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="editDescription">Description:</label>
+            <textarea id="editDescription" rows="3" required></textarea>
+            <span class="error-msg" id="errorEditDescription"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="editTags">Tags:</label>
+            <input id="editTags" type="text" required />
+            <div id="suggestedEditTags" class="suggested-tags"></div>
+            <span class="error-msg" id="errorEditTags"></span>
+          </div>
+
+          <fieldset class="form-group">
+            <legend>Images:</legend>
+            <div id="editImagePreview" class="image-preview"></div>
+            <div class="image-input-group">
+              <input
+                id="editImageUrl"
+                type="url"
+                placeholder="Add new image URL"
+              />
+              <button type="button" id="addEditImageBtn" class="btn-secondary">
+                + Add Image
+              </button>
+              <span class="error-msg" id="errorEditImageUrl"></span>
+            </div>
+          </fieldset>
+
+          <div class="form-buttons">
+            <button type="button" id="saveEditBtn" class="btn-success">
+              Save Changes
+            </button>
+            <button type="button" id="cancelEditBtn" class="btn-secondary">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Card grid container (displays examples as cards on mobile/tablet) -->
+      <div id="cardGrid" class="grid"></div>
+
+      <!-- Table container (displays examples as a table on desktop) -->
+      <div id="tableContainer">
+        <table id="dataTable" class="data-table">
+          <thead>
+            <tr>
+              <th data-sort="target-asc">Target</th>
+              <th data-sort="title-asc">Title</th>
+              <th>Tags</th>
+              <th>Rating</th>
+              <th>Favorite</th>
+              <th>Images</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <!-- Table body will be populated by JavaScript -->
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- Details Modal - Shows full information about an example -->
+    <div id="detailsModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle">Example Details</h2>
+          <button class="modal-close" onclick="closeDetailsModal()">✕</button>
+        </div>
+        <!-- Modal body content will be filled by JavaScript -->
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeDetailsModal()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Confirm Delete</h2>
+        </div>
+        <div class="modal-body">
+          <p id="deleteMessage">
+            Are you sure you want to delete this example?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button id="confirmDeleteBtn" class="btn-danger">Delete</button>
+          <button class="btn-secondary" onclick="closeDeleteModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tag Manager Modal - For creating and managing custom tags -->
+    <div id="tagManagerModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Manage Tags</h2>
+          <button class="modal-close" onclick="closeTagManagerModal()">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="newTagInput">Add New Tag:</label>
+            <div class="tag-input-group">
+              <input
+                id="newTagInput"
+                type="text"
+                placeholder="Enter tag name"
+                maxlength="25"
+              />
+              <button id="addNewTagBtn" class="btn-success">Add Tag</button>
+            </div>
+            <span class="error-msg" id="errorNewTag"></span>
+          </div>
+
+          <div class="form-group">
+            <label>Current Tags:</label>
+            <!-- List of existing tags will be shown here -->
+            <div id="tagManagerList" class="tag-manager-list"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeTagManagerModal()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript Code Starts Here -->
+    <script>
+      // ========================================
+      // CONFIGURATION & STATE
+      // ========================================
+
+      // Path to the JSON file containing example data
+      const JSON_PATH = "./un_sustainability_goal_12.json";
+
+      // Keys used to save and load data from browser's localStorage
+      const STORAGE_KEY = "sdg12-examples-v2";
+      const TAGS_STORAGE_KEY = "sdg12-custom-tags-v1";
+
+      // Main data arrays - these hold all our examples and tags
+      let allExamples = []; // Array of all example objects
+      let allTags = new Set(); // Set of all available tags (Set prevents duplicates)
+      let customTags = new Set(); // Set of custom tags created by the user
+
+      // Current UI state - these track what the user has selected
+      let currentFilter = []; // Array of currently selected tag filters
+      let currentTargetFilter = []; // Array of currently selected target number filters
+      let currentSort = "target-asc"; // Current sort option
+      let deleteTargetId = null; // ID of example to delete (when delete modal is open)
+      let isDesktop = false; // Whether we're on desktop view (determines card vs table display)
+      let detailsTargetId = null; // ID of example being viewed in details modal
+
+      // Rubric study map (in requirement order):
+      // REQ-FETCH: loadData() + fetch() + getDefaultFavorite() + getDefaultRating()
+      // REQ-RESPONSIVE: checkIsDesktop(), updateDisplay(), hamburger event listeners
+      // REQ-CARDS-TABLE: renderCards(), renderTable()
+      // REQ-ROW-MODAL: row click in renderTable() -> openDetailsModal()
+      // REQ-SORT: getFilteredAndSorted() + sortBy change listener
+      // REQ-ADD: addExample() + toggleAddBtn/cancelAddBtn listeners
+      // REQ-ADD-IMAGES: addNewImage() + #newImagePreview
+      // REQ-EDIT: editExample(), saveEdit(), cancelEditBtn listener
+      // REQ-EDIT-IMAGES: addNewEditImage() + edit image URL inputs in editExample()
+      // REQ-DELETE-MODAL: openDeleteModal(), deleteExample(), closeDeleteModal()
+      // REQ-VALIDATION: validateAddForm(), validateEditForm(), showError(), clearAllErrors()
+      // REQ-TAG-MATCH: validateTagsField() against allTags
+      // REQ-TAG-MANAGER: addNewTag(), renameTag(), deleteTag(), renderTagManager()
+
+      // ========================================
+      // REQ-FETCH SUPPORT: UTILITY FUNCTIONS
+      // ========================================
+
+      // Safely convert text to HTML (prevents code injection)
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      // REQ-FETCH: random favorite = "yes" or "no"
+      function getDefaultFavorite() {
+        return Math.random() > 0.5 ? "yes" : "no";
+      }
+
+      // REQ-FETCH: random rating = integer 0-5
+      function getDefaultRating() {
+        return Math.floor(Math.random() * 6);
+      }
+
+      // Display favorite as heart icon
+      function getFavoriteIcon(favoriteValue) {
+        return favoriteValue === "yes" ? "♥" : "♡";
+      }
+
+      // Create a string of stars for rating display
+      // Example: rating of 3 returns "★★★☆☆"
+      function getRatingStars(rating) {
+        return "★".repeat(rating) + "☆".repeat(5 - rating);
+      }
+
+      // Clean tag text: "  Green Procurement  " becomes "green procurement"
+      function cleanTag(tag) {
+        return tag.trim().toLowerCase();
+      }
+
+      // Convert comma-separated tags into a clean array (no duplicates or empty values)
+      function getCleanTagList(tagsInput) {
+        const rawTags = tagsInput.split(",");
+        const seen = new Set();
+        const result = [];
+
+        for (const rawTag of rawTags) {
+          const tag = cleanTag(rawTag);
+          if (!tag) continue; // Skip empty tags
+          if (seen.has(tag)) continue; // Skip duplicate tags
+
+          seen.add(tag);
+          result.push(tag);
+        }
+
+        return result;
+      }
+
+      // Keep tag text in its stored format (no forced capitalization)
+      function makeTagDisplay(tag) {
+        return tag;
+      }
+
+      // Extract number from target string for sorting ("12.3" or "Target 12.1" → 12.1)
+      function targetTextToNumber(targetNumber) {
+        const cleaned = targetNumber.replace(/[^0-9.]/g, "");
+        const parsed = parseFloat(cleaned);
+        return isNaN(parsed) ? 0 : parsed;
+      }
+
+      // Show an error message under a form field
+      function showError(elementId, message) {
+        const el = document.getElementById(elementId);
+        if (el) {
+          el.textContent = message;
+          el.style.display = message ? "block" : "none";
+        }
+      }
+
+      // Clear all error messages on the page
+      function clearAllErrors() {
+        document.querySelectorAll(".error-msg").forEach((el) => {
+          el.textContent = "";
+          el.style.display = "none";
+        });
+      }
+
+      // Check if a target number is valid (must be a positive number like 12.1)
+      function isValidTargetNumber(str) {
+        const num = parseFloat(str);
+        return !isNaN(num) && num > 0 && str.match(/^\d+(\.\d+)?$/);
+      }
+
+      // Check if a string is a valid URL
+      function isValidUrl(str) {
+        try {
+          new URL(str);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      // ========================================
+      // REQ-FETCH: DATA LOADING
+      // ========================================
+      // Load data from JSON file, then check for saved changes in localStorage
+      async function loadData() {
+        try {
+          // Fetch the JSON file from the server
+          const response = await fetch(JSON_PATH);
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const data = await response.json();
+
+          // Convert JSON structure into a flat array of examples
+          allExamples = [];
+          for (const target of data.goal.targets) {
+            for (const example of target.examples || []) {
+              // Generate a unique ID for each example
+              const id = Math.random().toString(36).substr(2, 9);
+              allExamples.push({
+                id,
+                targetNumber: target.number,
+                targetTitle: target.description,
+                title: example.title,
+                description: example.description,
+                images: example.images || [],
+                tags: getCleanTagList((example.tags || []).join(",")),
+                favorite: getDefaultFavorite(), // Default favorite status
+                rating: getDefaultRating(), // Default rating
+              });
+              // Collect all tags from examples
+              (example.tags || []).forEach((tag) => allTags.add(cleanTag(tag)));
+            }
+          }
+
+          // Check if user has saved changes in localStorage
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            try {
+              // If saved data exists, use it instead of the baseline
+              allExamples = JSON.parse(saved);
+              allExamples.forEach((ex) => {
+                ex.tags = getCleanTagList((ex.tags || []).join(","));
+              });
+            } catch (e) {
+              console.error("Error parsing saved data", e);
+            }
+          }
+
+          // Load custom tags from localStorage
+          const savedTags = localStorage.getItem(TAGS_STORAGE_KEY);
+          if (savedTags) {
+            try {
+              const parsedTags = JSON.parse(savedTags);
+              customTags = new Set(
+                (parsedTags || []).map(cleanTag).filter(Boolean),
+              );
+            } catch (e) {
+              console.error("Error parsing saved tags", e);
+              customTags = new Set();
+            }
+          }
+
+          // Populate the filter sidebars and display the examples
+          populateTagFilter();
+          populateTargetFilter();
+          updateDisplay();
+        } catch (error) {
+          // If loading fails, show an error message
+          document.getElementById("cardGrid").innerHTML =
+            `<p class="load-error-message">Error loading data: ${escapeHtml(error.message)}</p>`;
+        }
+      }
+
+      // ========================================
+      // REQ-TAG-MATCH SUPPORT: BUILD FILTER CHECKBOXES
+      // ========================================
+      // Build tag filter checkboxes from example tags and custom tags
+      function populateTagFilter() {
+        // Rebuild the tag list from current examples
+        allTags.clear();
+        for (const ex of allExamples) {
+          ex.tags = getCleanTagList((ex.tags || []).join(","));
+          ex.tags.forEach((tag) => allTags.add(tag));
+        }
+        // Add custom tags
+        customTags.forEach((tag) => allTags.add(tag));
+
+        const container = document.getElementById("tagFilterContainer");
+        container.innerHTML = "";
+
+        // Create a checkbox for each tag (sorted alphabetically)
+        Array.from(allTags)
+          .sort()
+          .forEach((tag) => {
+            const label = document.createElement("label");
+            label.className = "tag-checkbox-label";
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = tag;
+            checkbox.checked = currentFilter.includes(tag);
+            checkbox.addEventListener("change", updateTagFilter);
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(makeTagDisplay(tag)));
+            container.appendChild(label);
+          });
+      }
+
+      // Build target number filter checkboxes from examples
+      function populateTargetFilter() {
+        const targets = new Set();
+        for (const ex of allExamples) {
+          targets.add(ex.targetNumber);
+        }
+
+        const container = document.getElementById("targetFilterContainer");
+        container.innerHTML = "";
+
+        // Sort targets numerically and create checkboxes
+        Array.from(targets)
+          .sort((a, b) => {
+            return targetTextToNumber(a) - targetTextToNumber(b);
+          })
+          .forEach((target) => {
+            const label = document.createElement("label");
+            label.className = "target-checkbox-label";
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = target;
+            checkbox.checked = currentTargetFilter.includes(target);
+            checkbox.addEventListener("change", updateTargetFilter);
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(target));
+            container.appendChild(label);
+          });
+      }
+
+      // ========================================
+      // REQ-SORT: FILTERING & SORTING
+      // ========================================
+      // Filter by selected tags/targets, then sort by current option
+      function getFilteredAndSorted() {
+        let filtered = allExamples;
+
+        // Apply tag filter if any tags are selected
+        if (currentFilter.length > 0) {
+          filtered = filtered.filter((ex) =>
+            currentFilter.some((tag) => ex.tags.includes(tag)),
+          );
+        }
+
+        // Apply target number filter if any targets are selected
+        if (currentTargetFilter.length > 0) {
+          filtered = filtered.filter((ex) =>
+            currentTargetFilter.includes(ex.targetNumber),
+          );
+        }
+
+        // Create a copy of the filtered array for sorting
+        const sorted = [...filtered];
+
+        // Sort based on the current sort option
+        switch (currentSort) {
+          case "title-asc":
+            sorted.sort((a, b) => a.title.localeCompare(b.title));
+            break;
+          case "title-desc":
+            sorted.sort((a, b) => b.title.localeCompare(a.title));
+            break;
+          case "target-asc":
+            sorted.sort(
+              (a, b) =>
+                targetTextToNumber(a.targetNumber) -
+                targetTextToNumber(b.targetNumber),
+            );
+            break;
+          case "target-desc":
+            sorted.sort(
+              (a, b) =>
+                targetTextToNumber(b.targetNumber) -
+                targetTextToNumber(a.targetNumber),
+            );
+            break;
+          case "tags-asc":
+            sorted.sort((a, b) =>
+              a.tags.join(", ").localeCompare(b.tags.join(", ")),
+            );
+            break;
+          case "tags-desc":
+            sorted.sort((a, b) =>
+              b.tags.join(", ").localeCompare(a.tags.join(", ")),
+            );
+            break;
+          case "favorite-asc":
+            sorted.sort((a, b) => {
+              const favA = a.favorite === "yes" ? 1 : 0;
+              const favB = b.favorite === "yes" ? 1 : 0;
+              if (favA !== favB) return favA - favB;
+              return a.title.localeCompare(b.title);
+            });
+            break;
+          case "favorite-desc":
+            sorted.sort((a, b) => {
+              const favA = a.favorite === "yes" ? 1 : 0;
+              const favB = b.favorite === "yes" ? 1 : 0;
+              if (favA !== favB) return favB - favA;
+              return a.title.localeCompare(b.title);
+            });
+            break;
+          case "rating-asc":
+            sorted.sort((a, b) => a.rating - b.rating);
+            break;
+          case "rating-desc":
+            sorted.sort((a, b) => b.rating - a.rating);
+            break;
+          case "images-asc":
+            sorted.sort((a, b) => a.images.length - b.images.length);
+            break;
+          case "images-desc":
+            sorted.sort((a, b) => b.images.length - a.images.length);
+            break;
+          default:
+            break;
+        }
+
+        return sorted;
+      }
+
+      // ========================================
+      // REQ-RESPONSIVE + REQ-CARDS-TABLE: RENDERING
+      // ========================================
+      // Show cards (mobile/tablet) or table (desktop)
+      function updateDisplay() {
+        checkIsDesktop();
+        if (isDesktop) {
+          renderTable();
+        } else {
+          renderCards();
+        }
+      }
+
+      // Check if we're on desktop (screen width > 768px)
+      function checkIsDesktop() {
+        isDesktop = window.innerWidth > 768;
+        document.getElementById("cardGrid").style.display = isDesktop
+          ? "none"
+          : "block";
+        document.getElementById("tableContainer").style.display = isDesktop
+          ? "block"
+          : "none";
+      }
+
+      // Render examples as cards (mobile/tablet view)
+      function renderCards() {
+        const grid = document.getElementById("cardGrid");
+        grid.innerHTML = "";
+        const examples = getFilteredAndSorted();
+
+        if (examples.length === 0) {
+          grid.innerHTML = "<p>No examples found.</p>";
+          return;
+        }
+
+        // Create a card for each example
+        examples.forEach((ex) => {
+          const card = document.createElement("article");
+          card.className = "card";
+
+          const ratingStars = getRatingStars(ex.rating);
+          const favoriteIcon = getFavoriteIcon(ex.favorite);
+
+          // Build the card's HTML content
+          card.innerHTML = `
+          <div class="card-header">
+            <div>
+              <span class="target-badge">${escapeHtml(ex.targetNumber)}</span>
+              <h3 onclick="openDetailsModal('${ex.id}')" title="Click to view details">${escapeHtml(ex.title)}</h3>
+            </div>
+            <div class="card-meta">
+              <span class="rating-trigger" title="Rating">${ratingStars} (${ex.rating}/5)</span>
+              <span class="favorite-toggle" title="Favorite">${favoriteIcon}</span>
+            </div>
+          </div>
+          <p class="card-description">${escapeHtml(ex.description)}</p>
+          ${
+            ex.tags.length > 0
+              ? `
+            <div class="card-tags">
+              <strong>Tags:</strong> ${ex.tags.map((t) => `<span class="tag">${escapeHtml(makeTagDisplay(t))}</span>`).join("")}
+            </div>
+          `
+              : ""
+          }
+          <div class="card-images-section">
+            <button type="button" class="btn-secondary" onclick="toggleCardImages('${ex.id}', this)">
+              ▶ View Images (${ex.images.length})
+            </button>
+            <div id="images-${ex.id}" class="card-images hidden"></div>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="btn-secondary" onclick="editExample('${ex.id}')">Edit</button>
+            <button type="button" class="btn-danger" onclick="openDeleteModal('${ex.id}')">Delete</button>
+          </div>
+        `;
+
+          // Add images to the hidden images container
+          const imagesDiv = card.querySelector(`#images-${ex.id}`);
+          if (ex.images.length === 0) {
+            imagesDiv.innerHTML = "<p>No images available.</p>";
+          } else {
+            ex.images.forEach((src) => {
+              const img = document.createElement("img");
+              img.src = src;
+              img.alt = ex.title;
+              imagesDiv.appendChild(img);
+            });
+          }
+
+          grid.appendChild(card);
+        });
+      }
+
+      // Render examples as a table (desktop view)
+      function renderTable() {
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        const examples = getFilteredAndSorted();
+
+        // Create a table row for each example
+        examples.forEach((ex) => {
+          const row = document.createElement("tr");
+          const ratingStars = getRatingStars(ex.rating);
+          const favoriteIcon = getFavoriteIcon(ex.favorite);
+
+          row.innerHTML = `
+          <td>${escapeHtml(ex.targetNumber)}</td>
+          <td><span class="table-title" onclick="openDetailsModal('${ex.id}')" title="Click to view details">${escapeHtml(ex.title)}</span></td>
+          <td>${ex.tags.map((t) => `<span class="tag">${escapeHtml(makeTagDisplay(t))}</span>`).join("")}</td>
+          <td title="Rating">${ratingStars} (${ex.rating}/5)</td>
+          <td title="Favorite">${favoriteIcon}</td>
+          <td>${ex.images.length} image(s)</td>
+          <td>
+            <button type="button" class="btn-secondary btn-sm" onclick="editExample('${ex.id}')">Edit</button>
+            <button type="button" class="btn-danger btn-sm" onclick="openDeleteModal('${ex.id}')">Delete</button>
+          </td>
+        `;
+
+          // Make the whole row clickable (except for buttons)
+          row.classList.add("clickable-row");
+          row.addEventListener("click", (event) => {
+            // Don't open details if user clicked on a button or input
+            if (event.target.closest("button, a, input, label, select")) return;
+            openDetailsModal(ex.id);
+          });
+
+          tbody.appendChild(row);
+        });
+      }
+
+      // ========================================
+      // REQ-ROW-MODAL + REQ-DELETE-MODAL: MODALS
+      // ========================================
+      // Build the details modal content
+      function renderDetailsModal(ex) {
+        const ratingStars = getRatingStars(ex.rating);
+        const favoriteIcon = getFavoriteIcon(ex.favorite);
+
+        let imagesHtml = "";
+        if (ex.images.length > 0) {
+          imagesHtml =
+            "<div class='detail-images'>" +
+            ex.images
+              .map(
+                (src) =>
+                  `<img src="${escapeHtml(src)}" alt="${escapeHtml(ex.title)}">`,
+              )
+              .join("") +
+            "</div>";
+        } else {
+          imagesHtml = "<p>No images available.</p>";
+        }
+
+        document.getElementById("modalBody").innerHTML = `
+        <p><strong>Target Number:</strong> ${escapeHtml(ex.targetNumber)}</p>
+        <p><strong>Title:</strong> ${escapeHtml(ex.title)}</p>
+        <p><strong>Description:</strong> ${escapeHtml(ex.description)}</p>
+        <p><strong>Rating:</strong> ${ratingStars} (${ex.rating}/5)</p>
+        <p><strong>Favorite:</strong> ${favoriteIcon}</p>
+        <p><strong>Tags:</strong> ${ex.tags.map((t) => `<span class="tag">${escapeHtml(makeTagDisplay(t))}</span>`).join("")}</p>
+        <p><strong>Images:</strong></p>
+        ${imagesHtml}
+      `;
+      }
+
+      function openDetailsModal(id) {
+        const ex = allExamples.find((e) => e.id === id);
+        if (!ex) return;
+
+        detailsTargetId = id;
+        renderDetailsModal(ex);
+
+        document.getElementById("detailsModal").style.display = "block";
+      }
+
+      function closeDetailsModal() {
+        document.getElementById("detailsModal").style.display = "none";
+        detailsTargetId = null;
+      }
+
+      function openDeleteModal(id) {
+        deleteTargetId = id;
+        const ex = allExamples.find((e) => e.id === id);
+        document.getElementById("deleteMessage").textContent =
+          `Are you sure you want to delete "${ex.title}"?`;
+        document.getElementById("deleteModal").style.display = "block";
+      }
+
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").style.display = "none";
+        deleteTargetId = null;
+      }
+
+      // ========================================
+      // REQ-ADD + REQ-EDIT + REQ-DELETE + REQ-VALIDATION
+      // ========================================
+      // Validate tags field (check not empty and tags exist)
+      function validateTagsField(tagsInput, errorElementId, missingTagMessage) {
+        if (!tagsInput) {
+          showError(errorElementId, "Please enter at least one tag");
+          return false;
+        }
+
+        const tags = getCleanTagList(tagsInput);
+        if (tags.length === 0) {
+          showError(errorElementId, "Remove empty tags");
+          return false;
+        }
+
+        for (const tag of tags) {
+          if (!allTags.has(tag)) {
+            showError(errorElementId, missingTagMessage(tag));
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      // Get all values from the Add form
+      function getAddFormData() {
+        return {
+          targetNumber: document.getElementById("newTargetNumber").value.trim(),
+          title: document.getElementById("newTitle").value.trim(),
+          description: document.getElementById("newDescription").value.trim(),
+          tagsInput: document.getElementById("newTags").value.trim(),
+          images: Array.from(
+            document.querySelectorAll("#newImagePreview img"),
+          ).map((img) => img.src),
+        };
+      }
+
+      // Get all values from the Edit form
+      function getEditFormData() {
+        const imageUrls = [];
+        document
+          .querySelectorAll("#editImagePreview .edit-image-url")
+          .forEach((input) => {
+            const value = input.value.trim();
+            if (value) imageUrls.push(value);
+          });
+
+        return {
+          id: document.getElementById("editId").value,
+          targetNumber: document
+            .getElementById("editTargetNumber")
+            .value.trim(),
+          title: document.getElementById("editTitle").value.trim(),
+          description: document.getElementById("editDescription").value.trim(),
+          tagsInput: document.getElementById("editTags").value.trim(),
+          images: imageUrls,
+        };
+      }
+
+      // Validate Add form fields and show errors if needed
+      function validateAddForm() {
+        clearAllErrors();
+        let isValid = true;
+
+        const formData = getAddFormData();
+
+        if (!isValidTargetNumber(formData.targetNumber)) {
+          showError(
+            "errorTargetNumber",
+            "Invalid target number. Use format like 12.1 or 12",
+          );
+          isValid = false;
+        }
+
+        if (!formData.title || formData.title.length < 3) {
+          showError("errorTitle", "Title must be at least 3 characters");
+          isValid = false;
+        }
+
+        if (!formData.description || formData.description.length < 10) {
+          showError(
+            "errorDescription",
+            "Description must be at least 10 characters",
+          );
+          isValid = false;
+        }
+
+        const areTagsValid = validateTagsField(
+          formData.tagsInput,
+          "errorTags",
+          (tag) =>
+            `Tag "${tag}" does not exist. Use tag manager to create it first.`,
+        );
+        if (!areTagsValid) isValid = false;
+
+        return isValid;
+      }
+
+      // Validate Edit form fields and show errors if needed
+      function validateEditForm() {
+        clearAllErrors();
+        let isValid = true;
+
+        const formData = getEditFormData();
+
+        if (!isValidTargetNumber(formData.targetNumber)) {
+          showError("errorEditTargetNumber", "Invalid target number");
+          isValid = false;
+        }
+
+        if (!formData.title || formData.title.length < 3) {
+          showError("errorEditTitle", "Title must be at least 3 characters");
+          isValid = false;
+        }
+
+        if (!formData.description || formData.description.length < 10) {
+          showError(
+            "errorEditDescription",
+            "Description must be at least 10 characters",
+          );
+          isValid = false;
+        }
+
+        const areTagsValid = validateTagsField(
+          formData.tagsInput,
+          "errorEditTags",
+          (tag) => `Tag "${tag}" does not exist`,
+        );
+        if (!areTagsValid) isValid = false;
+
+        formData.images.forEach((url) => {
+          if (!isValidUrl(url)) {
+            showError("errorEditImageUrl", `Invalid image URL: ${url}`);
+            isValid = false;
+          }
+        });
+
+        return isValid;
+      }
+
+      // Add a new example (validate, create, save, display)
+      function addExample() {
+        // Don't proceed if validation fails
+        if (!validateAddForm()) return;
+
+        const formData = getAddFormData();
+
+        const newEx = {
+          id: Math.random().toString(36).substr(2, 9),
+          targetNumber: formData.targetNumber,
+          targetTitle: "Custom Target",
+          title: formData.title,
+          description: formData.description,
+          tags: getCleanTagList(formData.tagsInput),
+          images: formData.images,
+          favorite: "no",
+          rating: 0,
+        };
+
+        allExamples.push(newEx);
+        saveToStorage();
+        populateTagFilter();
+        populateTargetFilter();
+        updateDisplay();
+
+        // Clear the form and hide it
+        document.getElementById("addForm").reset();
+        document.getElementById("newImagePreview").innerHTML = "";
+        document.getElementById("addSection").style.display = "none";
+        document.getElementById("controls").style.display = "flex";
+      }
+
+      // Open edit form and populate with current values
+      function editExample(id) {
+        const ex = allExamples.find((e) => e.id === id);
+        if (!ex) return;
+
+        // Fill the form fields with current values
+        document.getElementById("editId").value = id;
+        document.getElementById("editTargetNumber").value = ex.targetNumber;
+        document.getElementById("editTitle").value = ex.title;
+        document.getElementById("editDescription").value = ex.description;
+        document.getElementById("editTags").value = ex.tags.join(", ");
+
+        // Show original images
+        const previewDiv = document.getElementById("editImagePreview");
+        previewDiv.innerHTML = ex.images
+          .map(
+            (src, idx) => `
+        <div class="image-item">
+          <img src="${escapeHtml(src)}" alt="Image ${idx + 1}">
+          <input type="url" class="edit-image-url" value="${escapeHtml(src)}" oninput="this.previousElementSibling.src=this.value.trim()" placeholder="Image URL">
+          <button type="button" class="btn-danger btn-sm" onclick="this.parentElement.remove()">Remove</button>
+        </div>
+      `,
+          )
+          .join("");
+
+        const editSection = document.getElementById("editSection");
+        editSection.style.display = "block";
+        document.getElementById("addSection").style.display = "none";
+        document.getElementById("cardGrid").style.display = "none";
+        document.getElementById("tableContainer").style.display = "none";
+        document.getElementById("controls").style.display = "none";
+
+        // Scroll to the edit form and focus on the title field
+        editSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        setTimeout(() => {
+          document.getElementById("editTitle").focus();
+        }, 250);
+      }
+
+      // Save edited example changes
+      function saveEdit() {
+        if (!validateEditForm()) return;
+
+        const formData = getEditFormData();
+
+        const ex = allExamples.find((e) => e.id === formData.id);
+        if (!ex) return;
+
+        // Update the example with new values
+        ex.targetNumber = formData.targetNumber;
+        ex.title = formData.title;
+        ex.description = formData.description;
+        ex.tags = getCleanTagList(formData.tagsInput);
+        ex.images = formData.images;
+
+        saveToStorage();
+        populateTagFilter();
+        populateTargetFilter();
+        updateDisplay();
+
+        document.getElementById("editSection").style.display = "none";
+        document.getElementById("controls").style.display = "flex";
+      }
+
+      // Delete an example from the list
+      function deleteExample() {
+        const idx = allExamples.findIndex((e) => e.id === deleteTargetId);
+        if (idx === -1) return;
+
+        allExamples.splice(idx, 1);
+        saveToStorage();
+        populateTagFilter();
+        populateTargetFilter();
+        updateDisplay();
+        closeDeleteModal();
+      }
+
+      // Save all data to localStorage (preserves changes after page refresh)
+      function saveToStorage() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(allExamples));
+        localStorage.setItem(
+          TAGS_STORAGE_KEY,
+          JSON.stringify(Array.from(customTags).sort()),
+        );
+      }
+
+      // ========================================
+      // REQ-ADD-IMAGES + REQ-EDIT-IMAGES
+      // ========================================
+      // Toggle image visibility in cards
+      function toggleCardImages(id, buttonElement) {
+        const container = document.getElementById(`images-${id}`);
+        container.classList.toggle("hidden");
+        buttonElement.textContent = buttonElement.textContent.replace(
+          /^[▶▼]/,
+          container.classList.contains("hidden") ? "▶" : "▼",
+        );
+      }
+
+      // Add image to Add form (validate URL and show preview)
+      function addNewImage() {
+        const url = document.getElementById("newImageUrl").value.trim();
+        if (!url) {
+          showError("errorImageUrl", "Please enter an image URL");
+          return;
+        }
+        if (!isValidUrl(url)) {
+          showError("errorImageUrl", "Please enter a valid URL");
+          return;
+        }
+
+        const preview = document.getElementById("newImagePreview");
+        const div = document.createElement("div");
+        div.className = "image-item";
+        div.innerHTML = `
+        <img src="${escapeHtml(url)}" alt="Preview" onerror="this.parentElement.remove()">
+        <button type="button" class="btn-danger btn-sm" onclick="this.parentElement.remove()">Remove</button>
+      `;
+        preview.appendChild(div);
+        document.getElementById("newImageUrl").value = "";
+        showError("errorImageUrl", "");
+      }
+
+      // Add image to Edit form
+      function addNewEditImage() {
+        const url = document.getElementById("editImageUrl").value.trim();
+        if (!url) {
+          showError("errorEditImageUrl", "Please enter an image URL");
+          return;
+        }
+        if (!isValidUrl(url)) {
+          showError("errorEditImageUrl", "Please enter a valid URL");
+          return;
+        }
+
+        const preview = document.getElementById("editImagePreview");
+        const div = document.createElement("div");
+        div.className = "image-item";
+        div.innerHTML = `
+        <img src="${escapeHtml(url)}" alt="Preview" onerror="this.parentElement.remove()">
+        <input type="url" class="edit-image-url" value="${escapeHtml(url)}" oninput="this.previousElementSibling.src=this.value.trim()" placeholder="Image URL">
+        <button type="button" class="btn-danger btn-sm" onclick="this.parentElement.remove()">Remove</button>
+      `;
+        preview.appendChild(div);
+        document.getElementById("editImageUrl").value = "";
+        showError("errorEditImageUrl", "");
+      }
+
+      // ========================================
+      // REQ-TAG-MANAGER
+      // ========================================
+      // Open tag manager modal
+      function openTagManagerModal() {
+        renderTagManager();
+        document.getElementById("tagManagerModal").style.display = "block";
+      }
+
+      // Close the tag manager modal
+      function closeTagManagerModal() {
+        document.getElementById("tagManagerModal").style.display = "none";
+      }
+
+      // Render tag list with edit/delete buttons
+      function renderTagManager() {
+        const list = document.getElementById("tagManagerList");
+        list.innerHTML = Array.from(allTags)
+          .sort()
+          .map(
+            (tag) => `
+        <div class="tag-manager-item">
+          <span>${escapeHtml(makeTagDisplay(tag))}</span>
+          <button type="button" class="btn-secondary btn-sm" onclick="renameTag('${escapeHtml(tag)}')">Edit</button>
+          <button type="button" class="btn-danger btn-sm" onclick="deleteTag('${escapeHtml(tag)}')">Delete</button>
+        </div>
+      `,
+          )
+          .join("");
+      }
+
+      // Rename a tag (updates in all examples)
+      function renameTag(oldTag) {
+        clearAllErrors();
+        const entered = prompt(
+          `Rename tag "${makeTagDisplay(oldTag)}" to:`,
+          oldTag,
+        );
+        if (entered === null) return;
+
+        const newTag = cleanTag(entered);
+        if (!newTag) {
+          showError("errorNewTag", "Tag name cannot be empty");
+          return;
+        }
+        if (newTag.length < 2) {
+          showError("errorNewTag", "Tag must be at least 2 characters");
+          return;
+        }
+        if (newTag.length > 25) {
+          showError("errorNewTag", "Tag cannot exceed 25 characters");
+          return;
+        }
+        if (newTag === oldTag) return;
+        if (allTags.has(newTag)) {
+          showError("errorNewTag", "This tag already exists");
+          return;
+        }
+
+        allExamples.forEach((ex) => {
+          ex.tags = ex.tags.map((tag) => (tag === oldTag ? newTag : tag));
+          ex.tags = getCleanTagList(ex.tags.join(","));
+        });
+
+        if (customTags.has(oldTag)) {
+          customTags.delete(oldTag);
+          customTags.add(newTag);
+        }
+
+        currentFilter = currentFilter.map((tag) =>
+          tag === oldTag ? newTag : tag,
+        );
+
+        saveToStorage();
+        populateTagFilter();
+        renderTagManager();
+        updateDisplay();
+        showError("errorNewTag", "");
+      }
+
+      // Add a new custom tag
+      function addNewTag() {
+        clearAllErrors();
+        const tagInput = document.getElementById("newTagInput");
+        const tagName = cleanTag(tagInput.value);
+
+        if (!tagName) {
+          showError("errorNewTag", "Please enter a tag name");
+          return;
+        }
+
+        if (tagName.length < 2) {
+          showError("errorNewTag", "Tag must be at least 2 characters");
+          return;
+        }
+
+        if (tagName.length > 25) {
+          showError("errorNewTag", "Tag cannot exceed 25 characters");
+          return;
+        }
+
+        if (allTags.has(tagName)) {
+          showError("errorNewTag", "This tag already exists");
+          return;
+        }
+
+        customTags.add(tagName);
+        allTags.add(tagName);
+        saveToStorage();
+        tagInput.value = "";
+        renderTagManager();
+        populateTagFilter();
+        showError("errorNewTag", "");
+      }
+
+      // Delete a tag from all examples
+      function deleteTag(tag) {
+        if (!confirm(`Delete tag "${tag}"?`)) return;
+
+        // Remove tag from all examples and tag sets
+        allTags.delete(tag);
+        customTags.delete(tag);
+        allExamples.forEach((ex) => {
+          ex.tags = ex.tags.filter((t) => t !== tag);
+        });
+
+        currentFilter = currentFilter.filter((t) => t !== tag);
+
+        saveToStorage();
+        renderTagManager();
+        populateTagFilter();
+        updateDisplay();
+      }
+
+      // ========================================
+      // EVENT LISTENERS (drives required interactions)
+      // ========================================
+      // Button click handlers
+      document.getElementById("addBtn").addEventListener("click", addExample);
+      document
+        .getElementById("saveEditBtn")
+        .addEventListener("click", saveEdit);
+      document
+        .getElementById("confirmDeleteBtn")
+        .addEventListener("click", deleteExample);
+      document
+        .getElementById("tagManagerBtn")
+        .addEventListener("click", openTagManagerModal);
+      document
+        .getElementById("openTagManagerFromAdd")
+        .addEventListener("click", openTagManagerModal);
+      document
+        .getElementById("addNewTagBtn")
+        .addEventListener("click", addNewTag);
+      document
+        .getElementById("addImageBtn")
+        .addEventListener("click", addNewImage);
+      document
+        .getElementById("addEditImageBtn")
+        .addEventListener("click", addNewEditImage);
+
+      // Add/Edit form toggle
+      document.getElementById("toggleAddBtn").addEventListener("click", () => {
+        const isHidden =
+          document.getElementById("addSection").style.display === "none";
+        if (isHidden) {
+          // Show add form, hide everything else
+          document.getElementById("addSection").style.display = "block";
+          document.getElementById("editSection").style.display = "none";
+          document.getElementById("cardGrid").style.display = "none";
+          document.getElementById("tableContainer").style.display = "none";
+          document.getElementById("controls").style.display = "none";
+        } else {
+          // Hide add form, show results
+          document.getElementById("addSection").style.display = "none";
+          document.getElementById("controls").style.display = "flex";
+          updateDisplay();
+        }
+      });
+
+      document.getElementById("cancelAddBtn").addEventListener("click", () => {
+        document.getElementById("addSection").style.display = "none";
+        document.getElementById("controls").style.display = "flex";
+        document.getElementById("addForm").reset();
+        document.getElementById("newImagePreview").innerHTML = "";
+        updateDisplay();
+      });
+
+      document.getElementById("cancelEditBtn").addEventListener("click", () => {
+        document.getElementById("editSection").style.display = "none";
+        document.getElementById("controls").style.display = "flex";
+        updateDisplay();
+      });
+
+      // Tag filter toggle
+      document
+        .getElementById("toggleTagFilter")
+        .addEventListener("click", () => {
+          const content = document.getElementById("tagFilterContent");
+          const btn = document.getElementById("toggleTagFilter");
+          content.classList.toggle("collapsed");
+          btn.textContent = content.classList.contains("collapsed") ? "▶" : "▼";
+        });
+
+      // Clear filter buttons
+      document.getElementById("clearTags").addEventListener("click", () => {
+        document
+          .querySelectorAll(".tag-checkbox-label input")
+          .forEach((cb) => (cb.checked = false));
+        currentFilter = [];
+        updateDisplay();
+      });
+
+      document.getElementById("clearTargets").addEventListener("click", () => {
+        document
+          .querySelectorAll(".target-checkbox-label input")
+          .forEach((cb) => (cb.checked = false));
+        currentTargetFilter = [];
+        updateDisplay();
+      });
+
+      // Filter update functions
+      function updateTagFilter() {
+        const selected = [];
+        const checkedBoxes = document.querySelectorAll(
+          ".tag-checkbox-label input:checked",
+        );
+        checkedBoxes.forEach((cb) => selected.push(cb.value));
+        currentFilter = selected;
+        updateDisplay();
+      }
+
+      function updateTargetFilter() {
+        const selected = [];
+        const checkedBoxes = document.querySelectorAll(
+          ".target-checkbox-label input:checked",
+        );
+        checkedBoxes.forEach((cb) => selected.push(cb.value));
+        currentTargetFilter = selected;
+        updateDisplay();
+      }
+
+      // Sort dropdown change handler
+      document.getElementById("sortBy").addEventListener("change", (e) => {
+        currentSort = e.target.value;
+        updateDisplay();
+      });
+
+      // Hamburger menu for mobile
+      document.getElementById("hamburgerMenu").addEventListener("click", () => {
+        document.getElementById("targetSidebar").classList.toggle("open");
+      });
+
+      document.getElementById("closeSidebar").addEventListener("click", () => {
+        document.getElementById("targetSidebar").classList.remove("open");
+      });
+
+      // Update display when window is resized
+      window.addEventListener("resize", () => {
+        updateDisplay();
+      });
+
+      // Close modals when clicking outside them (on the background)
+      document.getElementById("detailsModal").addEventListener("click", (e) => {
+        if (e.target.id === "detailsModal") closeDetailsModal();
+      });
+
+      document.getElementById("deleteModal").addEventListener("click", (e) => {
+        if (e.target.id === "deleteModal") closeDeleteModal();
+      });
+
+      document
+        .getElementById("tagManagerModal")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "tagManagerModal") closeTagManagerModal();
+        });
+
+      // Allow Enter key to add new tag
+      document
+        .getElementById("newTagInput")
+        .addEventListener("keypress", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            addNewTag();
+          }
+        });
+        
+      // START THE APPLICATION
+      loadData();
+    </script>
+  </body>
+</html>
